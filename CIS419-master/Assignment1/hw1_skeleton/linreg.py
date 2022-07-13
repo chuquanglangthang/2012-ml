@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class LinearRegression:
 
-    def __init__(self, init_theta=None, alpha=0.01, n_iter=100):
+    def __init__(self, init_theta=[10,10], alpha=0.01, n_iter=100):
         '''
         Constructor
         '''
@@ -31,11 +31,20 @@ class LinearRegression:
         '''
         n,d = X.shape
         self.JHist = []
-        for i in xrange(self.n_iter):
+        for i in range(self.n_iter):
             self.JHist.append( (self.computeCost(X, y, theta), theta) )
-            print "Iteration: ", i+1, " Cost: ", self.JHist[i][0], " Theta: ", theta
+            print("Iteration: ", i+1, " Cost: ", self.JHist[i][0], " Theta: ", theta)
             # TODO:  add update equation here
+            # n,d = X.shape
+            # thetaDimensions,b = theta.shape     
+            # corrections = [0] * thetaDimensions
 
+            # for j in range(0,n):
+            #     for thetaDimension in range(0,thetaDimensions):
+            #         corrections[thetaDimension] += (theta.getT()*X[j,:].getT() - y[j])*X[j,thetaDimension]
+            # for thetaDimension in range(0,thetaDimensions):
+            #     theta[thetaDimension] = theta[thetaDimension] - corrections[thetaDimension]*(self.alpha/n)
+            theta =  np.dot(np.linalg.inv(( np.dot(np.transpose(X), X) ) ), np.transpose(X)) * y
         return theta
     
 
@@ -51,7 +60,12 @@ class LinearRegression:
               ** make certain you don't return a matrix with just one value! **
         '''
         # TODO: add objective (cost) equation here
-    
+        n = len(X)
+
+        cost = (np.transpose(np.dot(X,theta) - y) * (np.dot(X,theta)- y) ) / (2*n)
+
+
+        return cost.item(0)
 
     def fit(self, X, y):
         '''
@@ -62,7 +76,7 @@ class LinearRegression:
         '''
         n = len(y)
         n,d = X.shape
-        if self.theta==None:
+        if self.theta==[10,10]:
             self.theta = np.matrix(np.zeros((d,1)))
         self.theta = self.gradientDescent(X,y,self.theta)    
 
@@ -76,3 +90,4 @@ class LinearRegression:
             an n-dimensional numpy vector of the predictions
         '''
         # TODO:  add prediction function here
+        return X*self.theta
